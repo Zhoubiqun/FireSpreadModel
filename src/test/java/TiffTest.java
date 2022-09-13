@@ -12,8 +12,8 @@ import java.io.IOException;
  * @date 2022/9/13 14:53
  */
 public class TiffTest {
-    private String filepathSlope = "D:\\作业\\实习\\论文\\GIS林火蔓延模型\\test\\zhejiangDEM_clip_slope.tif";
-    private String filepathType = "D:\\作业\\实习\\论文\\GIS林火蔓延模型\\test\\zhejiangDEM_clip_type.tif";
+    private String filepathSlope = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_slope.tif";
+    private String filepathType = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_type.tif";
 
     @Test
     public void test() throws IOException {
