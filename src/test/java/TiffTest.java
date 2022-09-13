@@ -1,4 +1,5 @@
 import com.sun.media.jai.opimage.PatternRIF;
+import com.zhou.MapModel;
 import com.zhou.utils.TiffTransform;
 import org.junit.Test;
 import org.opengis.coverage.Coverage;
@@ -25,6 +26,13 @@ public class TiffTest {
     public void test1() throws IOException {
         Coverage coverage = TiffTransform.readTiff(filepathType);
         //System.out.println(coverage);
+
+    }
+
+    @Test
+    public void loadSlope() throws IOException {
+        MapModel mapModel = new MapModel(filepathSlope, filepathType, null);
+        int t=0;
 
     }
 }

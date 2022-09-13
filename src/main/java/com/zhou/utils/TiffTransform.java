@@ -73,7 +73,7 @@ public class TiffTransform {
         int datatype = sampleModel.getDataType();
     }
 
-    public static Coverage readTiff(String tiffPath) throws IOException {
+    public static GridCoverage2D readTiff(String tiffPath) throws IOException {
         File f = new File(tiffPath);
         ParameterValue<OverviewPolicy> policy = AbstractGridFormat.OVERVIEW_POLICY.createValue();
         policy.setValue(OverviewPolicy.IGNORE);
@@ -82,24 +82,24 @@ public class TiffTransform {
         useJaiRead.setValue(true);
         GridCoverage2D image = new GeoTiffReader(f).read(new GeneralParameterValue[]{policy, gridsize, useJaiRead});
 
-        Envelope2D envelope2D = image.getEnvelope2D();
-        double minX = envelope2D.getBounds().getMinX();
-        double minY = envelope2D.getBounds().getMinY();
-        double maxX = envelope2D.getBounds().getMaxX();
-        double maxY = envelope2D.getBounds().getMaxY();
-        System.out.println(minX + " " + minY + " "+maxX +" "+maxY);
-
-        RenderedImage renderedImage = image.getRenderedImage();
-        Raster raster = renderedImage.getData();
-        Envelope envelope = image.getEnvelope();
-        int width = renderedImage.getWidth();
-        int height = renderedImage.getHeight();
-        for(int i=1;i<height;i++){
-            for(int j=1;j<width-1;j++){
-                float sampleFloat = raster.getSampleFloat(i, j, 0);
-                System.out.print("("+i+","+j+","+sampleFloat+")");
-            }
-        }
+//        Envelope2D envelope2D = image.getEnvelope2D();
+//        double minX = envelope2D.getBounds().getMinX();
+//        double minY = envelope2D.getBounds().getMinY();
+//        double maxX = envelope2D.getBounds().getMaxX();
+//        double maxY = envelope2D.getBounds().getMaxY();
+//        System.out.println(minX + " " + minY + " "+maxX +" "+maxY);
+//
+//        RenderedImage renderedImage = image.getRenderedImage();
+//        Raster raster = renderedImage.getData();
+//        Envelope envelope = image.getEnvelope();
+//        int width = renderedImage.getWidth();
+//        int height = renderedImage.getHeight();
+//        for(int i=1;i<height;i++){
+//            for(int j=1;j<width-1;j++){
+//                float sampleFloat = raster.getSampleFloat(i, j, 0);
+//                System.out.print("("+i+","+j+","+sampleFloat+")");
+//            }
+//        }
 
         return image;
     }
