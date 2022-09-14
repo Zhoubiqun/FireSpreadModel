@@ -117,18 +117,25 @@ public class TiffTransform {
         System.out.println(minX + " " + minY + " "+maxX +" "+maxY);
         // 84坐标系构造Geo
         GeodeticCalculator geodeticCalculator = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
+        // 左上角经纬度
         geodeticCalculator.setStartingGeographicPoint(minX,minY);
+        // 右上角经纬度
         geodeticCalculator.setDestinationGeographicPoint(maxX,minY);
+        // 计算距离：单位米
         double distance = geodeticCalculator.getOrthodromicDistance();
 
+        // 左上角经纬度
         geodeticCalculator.setStartingGeographicPoint(minX,minY);
+        // 左下角经纬度
         geodeticCalculator.setDestinationGeographicPoint(minX,maxY);
+        // 计算距离：单位米
         double distance1 = geodeticCalculator.getOrthodromicDistance();
         System.out.println(distance+" "+distance1);
 
         Raster data = coverage.getRenderedImage().getData();
         int width = data.getWidth();
         int height = data.getHeight();
+        //栅格平均距离
         System.out.println(distance/width);
         System.out.println(distance1/height);
     }
