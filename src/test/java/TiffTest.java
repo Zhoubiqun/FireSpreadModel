@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.opengis.coverage.Coverage;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.TransformException;
 
 import java.awt.image.Raster;
 import java.io.IOException;
@@ -35,7 +36,7 @@ public class TiffTest {
     }
 
     @Test
-    public void loadSlope() throws IOException {
+    public void loadSlope() throws IOException, TransformException {
         MapModel mapModel = new MapModel(filepathSlope, filepathType, null);
         int t=0;
 
@@ -67,5 +68,12 @@ public class TiffTest {
         int height = data.getHeight();
         System.out.println(distance/width);
         System.out.println(distance1/height);
+    }
+
+    @Test
+    public void testLat() throws TransformException, IOException {
+        GridCoverage2D gridCoverage2D = TiffTransform.readTiff(filepathSlope);
+        double[] latAndLon = TiffTransform.getLatAndLon(gridCoverage2D, 0, 0);
+        System.out.println(latAndLon[0]+" "+latAndLon[1]);
     }
 }

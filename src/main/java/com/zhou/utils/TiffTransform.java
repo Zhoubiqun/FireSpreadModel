@@ -1,21 +1,30 @@
 package com.zhou.utils;
 
+import com.zhou.Grid;
 import javafx.beans.property.SimpleMapProperty;
+import org.geotools.coverage.grid.GridCoordinates2D;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.OverviewPolicy;
 import org.geotools.gce.geotiff.GeoTiffReader;
 import org.geotools.geometry.Envelope2D;
 import org.geotools.geometry.GeneralEnvelope;
+import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.GeodeticCalculator;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.omg.CORBA.PUBLIC_MEMBER;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 import javax.media.jai.ImageLayout;
 import javax.media.jai.PlanarImage;
@@ -140,4 +149,34 @@ public class TiffTransform {
 //        System.out.println(distance1/height);
         return new double[]{distance/width,distance/height};
     }
+
+    // 初始化获取各个像素点经纬度
+    public static double[] getLatAndLon(GridCoverage2D coverage,int i,int j) throws TransformException {
+        GridEnvelope gridRange = coverage.getGridGeometry().getGridRange();
+        GeometryFactory gf = new GeometryFactory();
+
+        GridCoordinates2D coord = new GridCoordinates2D(i, j);
+        DirectPosition p = coverage.getGridGeometry().gridToWorld(coord);
+        Point point = gf.createPoint(new Coordinate(p.getOrdinate(0), p.getOrdinate(1)));
+        //Geometry wgsP = JTS.transform(point, targetToWgs);
+        System.out.format("(%d %d) -> POINT(%.2f %.2f)%n", i, j, point.getCoordinate().x,
+                point.getCoordinate().y);
+        //wgsP.getCentroid().getCoordinate().x, wgsP.getCentroid().getCoordinate().y
+
+        return new double[]{point.getCoordinate().x, point.getCoordinate().y};
+    }
+
+    // 根据经纬度算距离
+    public static double getDist(Grid g1, Grid g2){
+        // 84坐标系构造Geo
+        GeodeticCalculator geodeticCalculator = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
+        // 左上角经纬度
+        geodeticCalculator.setStartingGeographicPoint(g1.LatAndLon[0], g1.LatAndLon[1]);
+        // 右上角经纬度
+        geodeticCalculator.setDestinationGeographicPoint(g2.LatAndLon[0], g2.LatAndLon[1]);
+
+        return geodeticCalculator.getOrthodromicDistance();
+    }
+
+    //
 }

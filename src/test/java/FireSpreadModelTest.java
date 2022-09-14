@@ -3,6 +3,7 @@ import com.zhou.Grid;
 import com.zhou.MapModel;
 import com.zhou.WindModel;
 import org.junit.jupiter.api.Test;
+import org.opengis.referencing.operation.TransformException;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -36,7 +37,7 @@ public class FireSpreadModelTest {
     }
 
     @Test
-    public void testRun() throws IOException {
+    public void testRun() throws IOException, TransformException {
         String filepathSlope = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_slope.tif";
         String filepathType = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_type.tif";
 
