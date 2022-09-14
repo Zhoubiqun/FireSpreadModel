@@ -1,4 +1,5 @@
 import com.zhou.FireSpreadModel;
+import com.zhou.Grid;
 import com.zhou.MapModel;
 import com.zhou.WindModel;
 import org.junit.jupiter.api.Test;
@@ -40,17 +41,25 @@ public class FireSpreadModelTest {
         String filepathType = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_type.tif";
 
         MapModel mapModel = new MapModel(filepathSlope, filepathType, null);
-        WindModel windModel = new WindModel(0, 6);
-//        windModel.direction = Math.PI;//南
-        windModel.setDirection(Math.PI / 2);// 东
-//        windModel.direction = -Math.PI / 2;// 西
-//        WindModel windModel = new WindModel(-Math.PI, 6);
-//        WindModel windModel = new WindModel(Math.PI / 2, 6);
-//        WindModel windModel = new WindModel(-Math.PI / 2, 6);
+        WindModel windModel = new WindModel(0, 0);
+//        windModel.setDirection(Math.PI / 2);// 东
+//        windModel.setDirection(Math.PI); // 南
+//        windModel.setDirection(0); // 北
+        windModel.setDirection(-Math.PI / 2); // 西
+        windModel.setDirection(Math.PI / 4); // 东北
 
-//        WindModel windModel = new WindModel(Math.PI / 4, 6);
         List<int[]> startPoints = Arrays.asList(new int[]{50, 50});
 
+        Grid[][] map = mapModel.getMap();
+
+        for (int i = 0; i < mapModel.getHeight(); i++) {
+            for (int j = 0; j < mapModel.getWidth(); j++) {
+                if (i < 50)
+                    map[i][j].type = 4;
+                else
+                    map[i][j].type = 2;
+            }
+        }
         FireSpreadModel fireSpreadModel = new FireSpreadModel();
         fireSpreadModel.setParameter(7.4, mapModel, windModel, startPoints, 10);
         fireSpreadModel.run();
