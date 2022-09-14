@@ -7,6 +7,9 @@ import org.geotools.coverage.grid.io.OverviewPolicy;
 import org.geotools.gce.geotiff.GeoTiffReader;
 import org.geotools.geometry.Envelope2D;
 import org.geotools.geometry.GeneralEnvelope;
+import org.geotools.referencing.GeodeticCalculator;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.omg.CORBA.PUBLIC_MEMBER;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
@@ -104,4 +107,29 @@ public class TiffTransform {
         return image;
     }
 
+    public static void getUnitLength(GridCoverage2D coverage){
+        Envelope2D envelope2D = coverage.getEnvelope2D();
+        //获取经纬度
+        double minX = envelope2D.getBounds2D().getMinX();
+        double minY = envelope2D.getBounds2D().getMinY();
+        double maxX = envelope2D.getBounds2D().getMaxX();
+        double maxY = envelope2D.getBounds2D().getMaxY();
+        System.out.println(minX + " " + minY + " "+maxX +" "+maxY);
+        // 84坐标系构造Geo
+        GeodeticCalculator geodeticCalculator = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
+        geodeticCalculator.setStartingGeographicPoint(minX,minY);
+        geodeticCalculator.setDestinationGeographicPoint(maxX,minY);
+        double distance = geodeticCalculator.getOrthodromicDistance();
+
+        geodeticCalculator.setStartingGeographicPoint(minX,minY);
+        geodeticCalculator.setDestinationGeographicPoint(minX,maxY);
+        double distance1 = geodeticCalculator.getOrthodromicDistance();
+        System.out.println(distance+" "+distance1);
+
+        Raster data = coverage.getRenderedImage().getData();
+        int width = data.getWidth();
+        int height = data.getHeight();
+        System.out.println(distance/width);
+        System.out.println(distance1/height);
+    }
 }
