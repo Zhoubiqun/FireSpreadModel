@@ -15,6 +15,38 @@ public class MapModel {
     double unitLength = 1;
     Grid[][] map;
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public double getUnitLength() {
+        return unitLength;
+    }
+
+    public Grid[][] getMap() {
+        return map;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public void setUnitLength(double unitLength) {
+        this.unitLength = unitLength;
+    }
+
+    public void setMap(Grid[][] map) {
+        this.map = map;
+    }
+
     public MapModel(int width, int height, double unitLength) {
         this.width = width;
         this.height = height;
@@ -76,30 +108,6 @@ public class MapModel {
                 map[i][j].isIgnited = false;
                 map[i][j].ignitedTime = -1.0f;
             }
-        }
-    }
-}
-
-class Grid implements Comparable {
-    boolean isIgnited;
-    double ignitedTime;
-    //    int px, py;
-    double slope; // 坡度
-    double direction; // 坡向
-    double type; //可燃物类型
-
-    @Override
-    public int compareTo(Object o) {
-        if (this == o) return 0;
-        else if (o instanceof Grid) {
-            Grid g = (Grid) o;
-            if (ignitedTime <= g.ignitedTime) {
-                return -1;
-            } else {
-                return 1;
-            }
-        } else {
-            return -1;
         }
     }
 }

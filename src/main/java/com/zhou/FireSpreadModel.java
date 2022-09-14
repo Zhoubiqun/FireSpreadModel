@@ -43,7 +43,8 @@ public class FireSpreadModel {
 
     private double getR(double forwardDirection, Grid grid) {
         double Kw = Math.exp(0.1783 * wind.speed * Math.cos(Math.abs(wind.direction - forwardDirection)));
-        double Kslot = 1;// 坡度因子，暂时为1
+//        double Kslot = 1;// 坡度因子，暂时为1
+        double Kslot = Math.exp(3.533 * Math.tan(grid.slope * (-Math.cos(grid.direction - forwardDirection))));
         return R0 * KsMap.getOrDefault((int) grid.type, 0.0) * Kw * Kslot;
     }
 
@@ -65,8 +66,8 @@ public class FireSpreadModel {
             for (Long l : list) {
                 int[] point = new int[]{(int) (l / gridMap.width), (int) (l % gridMap.width)};
                 Grid grid = gridMap.map[point[0]][point[1]];
-                for (int i = -2; i <= 2; i++) {
-                    for (int j = -2; j <= 2; j++) {
+                for (int i = -1; i <= 1; i++) {
+                    for (int j = -1; j <= 1; j++) {
                         if (i != 0 || j != 0) {
                             int nx = point[0] + i, ny = point[1] + j;
                             if (nx < 0 || nx >= gridMap.height || ny < 0 || ny >= gridMap.width) {
