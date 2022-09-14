@@ -65,4 +65,66 @@ public class FireSpreadModelTest {
         fireSpreadModel.run();
     }
 
+
+    @Test
+    public void testSlope() {
+        String filepathSlope = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_slope.tif";
+        String filepathType = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_type.tif";
+
+        MapModel mapModel = new MapModel(300, 300, 1);
+        WindModel windModel = new WindModel(0, 0);
+
+        // 测试同一坡度，不同坡向
+        List<int[]> startPoints = Arrays.asList(new int[]{50, 50}, new int[]{150, 50}, new int[]{250, 50});
+        Grid[][] map = mapModel.getMap();
+        for (int i = 0; i < mapModel.getHeight(); i++) {
+            for (int j = 0; j < mapModel.getWidth(); j++) {
+                map[i][j].type = 2; //设置为2
+                map[i][j].slope = Math.PI / 2 / 4;
+                if (i < 100) {
+                    map[i][j].direction = 0; //北坡
+                } else if (i < 200) {
+                    map[i][j].direction = Math.PI / 2; //东坡
+                } else {
+                    map[i][j].direction = Math.PI + Math.PI / 4; //西南坡
+                }
+            }
+        }
+        FireSpreadModel fireSpreadModel = new FireSpreadModel();
+        fireSpreadModel.setParameter(7.4, mapModel, windModel, startPoints, 10);
+        fireSpreadModel.run();
+        char[][] t1 = getView(mapModel);
+        // 测试同一坡向,不同坡度
+        for (int i = 0; i < mapModel.getHeight(); i++) {
+            for (int j = 0; j < mapModel.getWidth(); j++) {
+                map[i][j].type = 2; //设置为2
+                map[i][j].direction = 0;
+                if (i < 100) {
+                    map[i][j].slope = Math.PI / 16;
+                } else if (i < 200) {
+                    map[i][j].slope = Math.PI / 8;
+                } else {
+                    map[i][j].slope = Math.PI / 4;
+                }
+            }
+        }
+        fireSpreadModel.setParameter(7.4, mapModel, windModel, startPoints, 10);
+        fireSpreadModel.run();
+        char[][] t2 = getView(mapModel);
+        int t = 0;
+    }
+
+    public char[][] getView(MapModel gridMap) {
+        char[][] t = new char[gridMap.getHeight()][gridMap.getWidth()];
+        for (int i = 0; i < gridMap.getHeight(); i++) {
+            for (int j = 0; j < gridMap.getWidth(); j++) {
+                if ((gridMap.getMap())[i][j].isIgnited) {
+                    t[i][j] = '-';
+                } else {
+                    t[i][j] = 'o';
+                }
+            }
+        }
+        return t;
+    }
 }
