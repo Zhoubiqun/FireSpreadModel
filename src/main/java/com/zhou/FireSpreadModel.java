@@ -74,7 +74,7 @@ public class FireSpreadModel {
                                 continue;
                             }
                             Grid neighborGrid = gridMap.map[nx][ny];
-                            double dist = gridMap.unitLength * (Math.sqrt(i * i + j * j)); // 目标点距离
+                            double dist = (Math.sqrt(i * i * gridMap.unitLength[0] * gridMap.unitLength[0] + j * j  * gridMap.unitLength[1] * gridMap.unitLength[1] )); // 目标点距离
                             double forwardDirection = -Math.atan2(-i, j) + Math.PI / 2; // 扩散方向角, 以(i=-1,j=0)为北向以及0度，则j=cos,-i=-sin
                             double v = getR(forwardDirection, grid);
                             if(v==0){

@@ -2,8 +2,10 @@ package com.zhou;
 
 import com.zhou.utils.TiffTransform;
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.geometry.Envelope2D;
 import org.opengis.coverage.Coverage;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.TransformException;
 
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
@@ -12,8 +14,12 @@ import java.io.IOException;
 public class MapModel {
     int width;
     int height;
-    double unitLength = 1;
+    double[] unitLength;
     Grid[][] map;
+    /**
+     * 经纬度范围，分别表示minX，minY，maxX，maxY
+     */
+    double[] latAndLongRange;
 
     public int getWidth() {
         return width;
@@ -23,7 +29,7 @@ public class MapModel {
         return height;
     }
 
-    public double getUnitLength() {
+    public double[] getUnitLength() {
         return unitLength;
     }
 
@@ -39,7 +45,7 @@ public class MapModel {
         this.height = height;
     }
 
-    public void setUnitLength(double unitLength) {
+    public void setUnitLength(double[] unitLength) {
         this.unitLength = unitLength;
     }
 
@@ -47,7 +53,7 @@ public class MapModel {
         this.map = map;
     }
 
-    public MapModel(int width, int height, double unitLength) {
+    public MapModel(int width, int height, double[] unitLength) {
         this.width = width;
         this.height = height;
         this.unitLength = unitLength;
@@ -59,7 +65,7 @@ public class MapModel {
         }
     }
 
-    public MapModel(String slopePath, String typePath, String directionPath) throws IOException {
+    public MapModel(String slopePath, String typePath, String directionPath) throws IOException, TransformException {
         GridCoverage2D coverage = TiffTransform.readTiff(slopePath);
         RenderedImage renderedImage = coverage.getRenderedImage();
         Raster raster = renderedImage.getData();
@@ -77,8 +83,16 @@ public class MapModel {
         for (int i = 1; i < height; i++) {
             for (int j = 1; j < width - 1; j++) {
                 map[i][j].slope = raster.getSampleFloat(i, j, 0);
+                map[i][j].LatAndLon = TiffTransform.getLatAndLon(coverage,i,j);
             }
         }
+
+        Envelope2D envelope2D = coverage.getEnvelope2D();
+        //获取经纬度
+        this.latAndLongRange[0] = envelope2D.getBounds2D().getMinX();
+        this.latAndLongRange[1] = envelope2D.getBounds2D().getMinY();
+        this.latAndLongRange[2] = envelope2D.getBounds2D().getMaxX();
+        this.latAndLongRange[3] = envelope2D.getBounds2D().getMaxY();
 
         coverage = TiffTransform.readTiff(typePath);
         raster = coverage.getRenderedImage().getData();
@@ -109,5 +123,11 @@ public class MapModel {
                 map[i][j].ignitedTime = -1.0f;
             }
         }
+    }
+
+    public int[] LatAndLonToIdx(double lat,double lon){
+        int i = (int) ((lat-latAndLongRange[0])/(latAndLongRange[2]-latAndLongRange[0]) * width);
+        int j = (int) ((lat-latAndLongRange[1])/(latAndLongRange[3]-latAndLongRange[1]) * height);
+        return new int[]{i,j};
     }
 }

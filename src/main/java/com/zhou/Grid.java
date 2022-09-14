@@ -8,6 +8,7 @@ public class Grid implements Comparable {
     public double direction; // 坡向
     public double type; //可燃物类型
 
+    public double[] LatAndLon;
 
     @Override
     public int compareTo(Object o) {
