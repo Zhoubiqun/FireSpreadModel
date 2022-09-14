@@ -12,7 +12,7 @@ import java.io.IOException;
 public class MapModel {
     int width;
     int height;
-    double unitLength = 1;
+    double[] unitLength;
     Grid[][] map;
 
     public int getWidth() {
@@ -23,7 +23,7 @@ public class MapModel {
         return height;
     }
 
-    public double getUnitLength() {
+    public double[] getUnitLength() {
         return unitLength;
     }
 
@@ -39,7 +39,7 @@ public class MapModel {
         this.height = height;
     }
 
-    public void setUnitLength(double unitLength) {
+    public void setUnitLength(double[] unitLength) {
         this.unitLength = unitLength;
     }
 
@@ -47,7 +47,7 @@ public class MapModel {
         this.map = map;
     }
 
-    public MapModel(int width, int height, double unitLength) {
+    public MapModel(int width, int height, double[] unitLength) {
         this.width = width;
         this.height = height;
         this.unitLength = unitLength;

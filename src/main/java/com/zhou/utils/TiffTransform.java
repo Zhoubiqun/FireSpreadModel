@@ -107,14 +107,14 @@ public class TiffTransform {
         return image;
     }
 
-    public static void getUnitLength(GridCoverage2D coverage){
+    public static double[] getUnitLength(GridCoverage2D coverage){
         Envelope2D envelope2D = coverage.getEnvelope2D();
         //获取经纬度
         double minX = envelope2D.getBounds2D().getMinX();
         double minY = envelope2D.getBounds2D().getMinY();
         double maxX = envelope2D.getBounds2D().getMaxX();
         double maxY = envelope2D.getBounds2D().getMaxY();
-        System.out.println(minX + " " + minY + " "+maxX +" "+maxY);
+//        System.out.println(minX + " " + minY + " "+maxX +" "+maxY);
         // 84坐标系构造Geo
         GeodeticCalculator geodeticCalculator = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
         // 左上角经纬度
@@ -130,13 +130,14 @@ public class TiffTransform {
         geodeticCalculator.setDestinationGeographicPoint(minX,maxY);
         // 计算距离：单位米
         double distance1 = geodeticCalculator.getOrthodromicDistance();
-        System.out.println(distance+" "+distance1);
+//        System.out.println(distance+" "+distance1);
 
         Raster data = coverage.getRenderedImage().getData();
         int width = data.getWidth();
         int height = data.getHeight();
         //栅格平均距离
-        System.out.println(distance/width);
-        System.out.println(distance1/height);
+//        System.out.println(distance/width);
+//        System.out.println(distance1/height);
+        return new double[]{distance/width,distance/height};
     }
 }
