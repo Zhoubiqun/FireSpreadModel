@@ -126,7 +126,7 @@ public class FireSpreadModelTest {
         double lat = 30.364368794296, lon = 119.671559873054;
         int[] loc = mapModel.LatAndLonToIdx(lat, lon);
         Grid grid = (mapModel.getMap())[loc[0]][loc[1]];
-        System.out.println(String.format("lat=%f,lon=%f,loc=(%d,%d),grid_lat=%f,grid_lon=%f", lat, lon, loc[0], loc[1], grid.LatAndLon[1], grid.LatAndLon[0]));
+        System.out.println(String.format("lat=%f,lon=%f,loc=(%d,%d),grid_lat=%f,grid_lon=%f", lat, lon, loc[0], loc[1], grid.LatAndLon[0], grid.LatAndLon[1]));
 
     }
 
