@@ -163,7 +163,7 @@ public class TiffTransform {
 //                point.getCoordinate().y);
         //wgsP.getCentroid().getCoordinate().x, wgsP.getCentroid().getCoordinate().y
 
-        return new double[]{point.getCoordinate().x, point.getCoordinate().y};
+        return new double[]{point.getCoordinate().y, point.getCoordinate().x};
     }
 
     // 根据经纬度算距离
