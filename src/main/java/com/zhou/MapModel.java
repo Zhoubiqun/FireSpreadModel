@@ -58,6 +58,9 @@ public class MapModel {
         this.height = height;
         this.unitLength = unitLength;
         map = new Grid[height][width];
+        if (latAndLongRange == null) {
+            latAndLongRange = new double[4];
+        }
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 map[i][j] = new Grid();
@@ -70,9 +73,14 @@ public class MapModel {
         RenderedImage renderedImage = coverage.getRenderedImage();
         Raster raster = renderedImage.getData();
 
+        if (latAndLongRange == null) {
+            latAndLongRange = new double[4];
+        }
+
         width = renderedImage.getWidth();
         height = renderedImage.getHeight();
         map = new Grid[height][width];
+        unitLength = TiffTransform.getUnitLength(coverage);
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 map[i][j] = new Grid();
@@ -82,8 +90,8 @@ public class MapModel {
 
         for (int i = 1; i < height; i++) {
             for (int j = 1; j < width - 1; j++) {
-                map[i][j].slope = raster.getSampleFloat(i, j, 0);
-                map[i][j].LatAndLon = TiffTransform.getLatAndLon(coverage,i,j);
+                map[i][j].slope = Math.toRadians(raster.getSampleFloat(i, j, 0));
+                map[i][j].LatAndLon = TiffTransform.getLatAndLon(coverage, i, j);
             }
         }
 
@@ -125,9 +133,17 @@ public class MapModel {
         }
     }
 
-    public int[] LatAndLonToIdx(double lat,double lon){
-        int i = (int) ((lat-latAndLongRange[0])/(latAndLongRange[2]-latAndLongRange[0]) * width);
-        int j = (int) ((lat-latAndLongRange[1])/(latAndLongRange[3]-latAndLongRange[1]) * height);
-        return new int[]{i,j};
+    public int[] LatAndLonToIdx(double lat, double lon) {
+        // latAndLongRange=[left_lon,bottom_lat,right_lon,top_lat]
+        // lat是纬度，用于计算i,lon是经度，用于计算j
+        double left_lon = latAndLongRange[0];
+        double bottom_lat = latAndLongRange[1];
+        double right_lon = latAndLongRange[2];
+        double top_lat = latAndLongRange[3];
+        int i = (int) ((top_lat - lat) / (top_lat - bottom_lat) * height);
+        int j = (int) ((lon - left_lon) / (right_lon - left_lon) * width);
+//        int i = (int) ((lat - latAndLongRange[0]) / (latAndLongRange[2] - latAndLongRange[0]) * width);
+//        int j = (int) ((latAndLongRange[3] - lon) / (latAndLongRange[3] - latAndLongRange[1]) * height);
+        return new int[]{i, j};
     }
 }

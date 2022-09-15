@@ -62,8 +62,10 @@ public class FireSpreadModelTest {
             }
         }
         FireSpreadModel fireSpreadModel = new FireSpreadModel();
-        fireSpreadModel.setParameter(7.4, mapModel, windModel, startPoints, 10);
+        fireSpreadModel.setParameter(7.4, mapModel, windModel, startPoints, 1000);
         fireSpreadModel.run();
+        char[][] t2 = getView(mapModel);
+        int t = 0;
     }
 
 
@@ -72,7 +74,7 @@ public class FireSpreadModelTest {
         String filepathSlope = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_slope.tif";
         String filepathType = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_type.tif";
 
-        MapModel mapModel = new MapModel(300, 300, 1);
+        MapModel mapModel = new MapModel(300, 300, new double[]{1.0, 1.0});
         WindModel windModel = new WindModel(0, 0);
 
         // 测试同一坡度，不同坡向
@@ -113,6 +115,19 @@ public class FireSpreadModelTest {
         fireSpreadModel.run();
         char[][] t2 = getView(mapModel);
         int t = 0;
+    }
+
+    @Test
+    public void testStartPoints() throws TransformException, IOException {
+        String filepathSlope = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_slope.tif";
+        String filepathType = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_type.tif";
+
+        MapModel mapModel = new MapModel(filepathSlope, filepathType, null);
+        double lat = 30.364368794296, lon = 119.671559873054;
+        int[] loc = mapModel.LatAndLonToIdx(lat, lon);
+        Grid grid = (mapModel.getMap())[loc[0]][loc[1]];
+        System.out.println(String.format("lat=%f,lon=%f,loc=(%d,%d),grid_lat=%f,grid_lon=%f", lat, lon, loc[0], loc[1], grid.LatAndLon[1], grid.LatAndLon[0]));
+
     }
 
     public char[][] getView(MapModel gridMap) {

@@ -127,18 +127,18 @@ public class TiffTransform {
         // 84坐标系构造Geo
         GeodeticCalculator geodeticCalculator = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
         // 左上角经纬度
-        geodeticCalculator.setStartingGeographicPoint(minX,minY);
+        geodeticCalculator.setStartingGeographicPoint(minX,maxY);
         // 右上角经纬度
-        geodeticCalculator.setDestinationGeographicPoint(maxX,minY);
+        geodeticCalculator.setDestinationGeographicPoint(maxX,maxY);
         // 计算距离：单位米
-        double distance = geodeticCalculator.getOrthodromicDistance();
+        double distanceLon = geodeticCalculator.getOrthodromicDistance();
 
         // 左上角经纬度
-        geodeticCalculator.setStartingGeographicPoint(minX,minY);
+        geodeticCalculator.setStartingGeographicPoint(minX,maxY);
         // 左下角经纬度
-        geodeticCalculator.setDestinationGeographicPoint(minX,maxY);
+        geodeticCalculator.setDestinationGeographicPoint(minX,minY);
         // 计算距离：单位米
-        double distance1 = geodeticCalculator.getOrthodromicDistance();
+        double distanceLat = geodeticCalculator.getOrthodromicDistance();
 //        System.out.println(distance+" "+distance1);
 
         Raster data = coverage.getRenderedImage().getData();
@@ -147,7 +147,7 @@ public class TiffTransform {
         //栅格平均距离
 //        System.out.println(distance/width);
 //        System.out.println(distance1/height);
-        return new double[]{distance/width,distance/height};
+        return new double[]{distanceLat/height,distanceLon/width};
     }
 
     // 初始化获取各个像素点经纬度
@@ -155,12 +155,12 @@ public class TiffTransform {
         GridEnvelope gridRange = coverage.getGridGeometry().getGridRange();
         GeometryFactory gf = new GeometryFactory();
 
-        GridCoordinates2D coord = new GridCoordinates2D(i, j);
+        GridCoordinates2D coord = new GridCoordinates2D(j, i);
         DirectPosition p = coverage.getGridGeometry().gridToWorld(coord);
         Point point = gf.createPoint(new Coordinate(p.getOrdinate(0), p.getOrdinate(1)));
         //Geometry wgsP = JTS.transform(point, targetToWgs);
-        System.out.format("(%d %d) -> POINT(%.2f %.2f)%n", i, j, point.getCoordinate().x,
-                point.getCoordinate().y);
+//        System.out.format("(%d %d) -> POINT(%.2f %.2f)%n", i, j, point.getCoordinate().x,
+//                point.getCoordinate().y);
         //wgsP.getCentroid().getCoordinate().x, wgsP.getCentroid().getCoordinate().y
 
         return new double[]{point.getCoordinate().x, point.getCoordinate().y};
