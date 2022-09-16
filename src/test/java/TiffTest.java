@@ -1,5 +1,4 @@
-import com.sun.media.jai.opimage.PatternRIF;
-import com.zhou.MapModel;
+import com.zhou.bean.GridMap;
 import com.zhou.utils.TiffTransform;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.geometry.Envelope2D;
@@ -7,8 +6,6 @@ import org.geotools.referencing.GeodeticCalculator;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.junit.Test;
 import org.opengis.coverage.Coverage;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 import java.awt.image.Raster;
@@ -37,7 +34,7 @@ public class TiffTest {
 
     @Test
     public void loadSlope() throws IOException, TransformException {
-        MapModel mapModel = new MapModel(filepathSlope, filepathType, null);
+        GridMap mapModel = new GridMap(filepathSlope, filepathType, null);
         int t=0;
 
     }

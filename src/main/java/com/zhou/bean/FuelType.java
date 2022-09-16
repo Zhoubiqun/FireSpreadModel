@@ -1,4 +1,4 @@
-package com.zhou;
+package com.zhou.bean;
 
 import java.util.HashMap;
 import java.util.Map;

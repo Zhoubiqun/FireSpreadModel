@@ -1,6 +1,6 @@
-package com.zhou;
+package com.zhou.bean;
 
-public class WindModel {
+public class Wind {
     double direction;
     double speed;
 
@@ -20,7 +20,7 @@ public class WindModel {
         this.speed = speed;
     }
 
-    public WindModel(double direction, double speed) {
+    public Wind(double direction, double speed) {
         this.direction = direction;
         this.speed = speed;
     }

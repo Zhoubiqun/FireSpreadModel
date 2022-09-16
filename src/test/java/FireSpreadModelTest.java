@@ -1,7 +1,7 @@
-import com.zhou.FireSpreadModel;
-import com.zhou.Grid;
-import com.zhou.MapModel;
-import com.zhou.WindModel;
+import com.zhou.model.FireSpreadModel;
+import com.zhou.bean.Grid;
+import com.zhou.bean.GridMap;
+import com.zhou.bean.Wind;
 import org.junit.jupiter.api.Test;
 import org.opengis.referencing.operation.TransformException;
 
@@ -41,8 +41,8 @@ public class FireSpreadModelTest {
         String filepathSlope = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_slope.tif";
         String filepathType = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_type.tif";
 
-        MapModel mapModel = new MapModel(filepathSlope, filepathType, null);
-        WindModel windModel = new WindModel(0, 0);
+        GridMap mapModel = new GridMap(filepathSlope, filepathType, null);
+        Wind windModel = new Wind(0, 0);
 //        windModel.setDirection(Math.PI / 2);// 东
 //        windModel.setDirection(Math.PI); // 南
 //        windModel.setDirection(0); // 北
@@ -74,8 +74,8 @@ public class FireSpreadModelTest {
         String filepathSlope = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_slope.tif";
         String filepathType = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_type.tif";
 
-        MapModel mapModel = new MapModel(300, 300, new double[]{1.0, 1.0});
-        WindModel windModel = new WindModel(0, 0);
+        GridMap mapModel = new GridMap(300, 300, new double[]{1.0, 1.0});
+        Wind windModel = new Wind(0, 0);
 
         // 测试同一坡度，不同坡向
         List<int[]> startPoints = Arrays.asList(new int[]{50, 50}, new int[]{150, 50}, new int[]{250, 50});
@@ -122,15 +122,15 @@ public class FireSpreadModelTest {
         String filepathSlope = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_slope.tif";
         String filepathType = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_type.tif";
 
-        MapModel mapModel = new MapModel(filepathSlope, filepathType, null);
-        double lat = 30.364368794296, lon = 119.671559873054;
+        GridMap mapModel = new GridMap(filepathSlope, filepathType, null);
+        double lat = 30.368368794296, lon = 119.670559873054;
         int[] loc = mapModel.LatAndLonToIdx(lat, lon);
         Grid grid = (mapModel.getMap())[loc[0]][loc[1]];
         System.out.println(String.format("lat=%f,lon=%f,loc=(%d,%d),grid_lat=%f,grid_lon=%f", lat, lon, loc[0], loc[1], grid.LatAndLon[0], grid.LatAndLon[1]));
 
     }
 
-    public char[][] getView(MapModel gridMap) {
+    public char[][] getView(GridMap gridMap) {
         char[][] t = new char[gridMap.getHeight()][gridMap.getWidth()];
         for (int i = 0; i < gridMap.getHeight(); i++) {
             for (int j = 0; j < gridMap.getWidth(); j++) {

@@ -1,17 +1,15 @@
-package com.zhou;
+package com.zhou.bean;
 
 import com.zhou.utils.TiffTransform;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.geometry.Envelope2D;
-import org.opengis.coverage.Coverage;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 
-public class MapModel {
+public class GridMap {
     int width;
     int height;
     double[] unitLength;
@@ -53,7 +51,7 @@ public class MapModel {
         this.map = map;
     }
 
-    public MapModel(int width, int height, double[] unitLength) {
+    public GridMap(int width, int height, double[] unitLength) {
         this.width = width;
         this.height = height;
         this.unitLength = unitLength;
@@ -68,7 +66,7 @@ public class MapModel {
         }
     }
 
-    public MapModel(String slopePath, String typePath, String directionPath) throws IOException, TransformException {
+    public GridMap(String slopePath, String typePath, String directionPath) throws IOException, TransformException {
         GridCoverage2D coverage = TiffTransform.readTiff(slopePath);
         RenderedImage renderedImage = coverage.getRenderedImage();
         Raster raster = renderedImage.getData();
@@ -88,6 +86,7 @@ public class MapModel {
         }
 
 
+        // 获取坡度
         for (int i = 1; i < height; i++) {
             for (int j = 1; j < width - 1; j++) {
                 map[i][j].slope = Math.toRadians(raster.getSampleFloat(i, j, 0));
@@ -96,7 +95,7 @@ public class MapModel {
         }
 
         Envelope2D envelope2D = coverage.getEnvelope2D();
-        //获取经纬度
+        // 获取经纬度范围
         this.latAndLongRange[0] = envelope2D.getBounds2D().getMinX();
         this.latAndLongRange[1] = envelope2D.getBounds2D().getMinY();
         this.latAndLongRange[2] = envelope2D.getBounds2D().getMaxX();
@@ -110,13 +109,14 @@ public class MapModel {
             }
         }
 
-//        coverage = TiffTransform.readTiff(typePath);
-//        raster = coverage.getRenderedImage().getData();
-//        for (int i = 1; i < height; i++) {
-//            for (int j = 1; j < width - 1; j++) {
-//                map[i][j].direction = raster.getSampleFloat(i, j, 0);
-//            }
-//        }
+        // 获取坡向
+        coverage = TiffTransform.readTiff(directionPath);
+        raster = coverage.getRenderedImage().getData();
+        for (int i = 1; i < height; i++) {
+            for (int j = 1; j < width - 1; j++) {
+                map[i][j].direction = Math.toRadians(raster.getSampleFloat(i, j, 0));
+            }
+        }
     }
 
     public void ignite(int x, int y, double t) {
