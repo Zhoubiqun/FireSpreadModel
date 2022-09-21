@@ -35,19 +35,19 @@ public class FirePredictController {
 
     @RequestMapping("/startRun")
     public String run(@RequestParam("ws") Double windSpeed,
-                          @RequestParam("wd") Double windDirection,
-                          @RequestParam("spLat") Double startPointLat,
-                          @RequestParam("spLon") Double startPointLon,
-                          @RequestParam("mT") double maxTime,
-                          @RequestParam("fuelMc") double fuelMoistureContent) {
+                      @RequestParam("wd") Double windDirection,
+                      @RequestParam("spLat") Double startPointLat,
+                      @RequestParam("spLon") Double startPointLon,
+                      @RequestParam("mT") double maxTime,
+                      @RequestParam("fuelMc") double fuelMoistureContent) {
         Wind wind = new Wind(windDirection, windSpeed);
         GridMap mapModel = null;
 
         try {
-            File slopeFile = ResourceUtils.getFile(this.getClass().getClassLoader().getResource("").getPath()+slopePath);
-            File typeFile = ResourceUtils.getFile(this.getClass().getClassLoader().getResource("").getPath()+typePath);
-            File directionFile = ResourceUtils.getFile(this.getClass().getClassLoader().getResource("").getPath()+directionPath);
-            mapModel = new GridMap(slopeFile, typeFile, directionFile);
+//            File slopeFile = ResourceUtils.getFile(this.getClass().getClassLoader().getResource("").getPath()+slopePath);
+//            File typeFile = ResourceUtils.getFile(this.getClass().getClassLoader().getResource("").getPath()+typePath);
+//            File directionFile = ResourceUtils.getFile(this.getClass().getClassLoader().getResource("").getPath()+directionPath);
+            mapModel = new GridMap(slopePath, typePath, directionPath);
         } catch (IOException e) {
             e.printStackTrace();
             return "Read file error :" + e;
@@ -64,15 +64,18 @@ public class FirePredictController {
 
 
         try {
-            File resultFile = ResourceUtils.getFile(this.getClass().getClassLoader().getResource("").getPath()+resultPath);
-            GeoTiffReader geoTiffReader = new GeoTiffReader(this.getClass().getClassLoader().getResource("").getPath()+slopePath);
-            GridCoverage2D gridCoverage2D = TiffTransform.readTiff(this.getClass().getClassLoader().getResource("").getPath()+slopePath);
+//            File resultFile = ResourceUtils.getFile(this.getClass().getClassLoader().getResource("").getPath()+resultPath);
+//            GeoTiffReader geoTiffReader = new GeoTiffReader(this.getClass().getClassLoader().getResource("").getPath()+slopePath);
+
+            File resultFile = new File(resultPath);
+            GeoTiffReader geoTiffReader = new GeoTiffReader(slopePath);
+            GridCoverage2D gridCoverage2D = TiffTransform.readTiff(slopePath);
             GridCoverage2D toTiff = TiffTransform.saveToTiff(geoTiffReader, gridCoverage2D, mapModel, resultFile);
         } catch (Exception e) {
             return "Save result error :" + e;
         }
 //        return "redirect:localhost:11117/result.tif";
-        return "ok,result in: localhost:11117/result.tif";
+        return "ok";
     }
 
 }

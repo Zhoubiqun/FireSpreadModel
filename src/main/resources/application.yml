@@ -11,7 +11,7 @@ server:
   port: 11117
 
 filename:
-  slope: "/data/LinAnDemSlope_nodata0.tif"
-  type: "/data/LinAnForestClass_nodata1.tif"
+  slope: "C:/Users/王宇/Desktop/apache-tomcat-9.0.65/webapps/ROOT/fireData/LinAnDemSlope_nodata0.tif"
+  type: "C:/Users/王宇/Desktop/apache-tomcat-9.0.65/webapps/ROOT/fireData/LinAnForestClass_nodata1.tif"
   direction: ""
-  result: "/static/result.tif"
+  result: "C:/Users/王宇/Desktop/apache-tomcat-9.0.65/webapps/ROOT/fireData/result.tif"

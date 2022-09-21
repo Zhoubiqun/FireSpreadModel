@@ -111,61 +111,8 @@ public class GridMap {
         }
 
         //获取坡向
-        coverage = TiffTransform.readTiff(directionPath);
-        raster = coverage.getRenderedImage().getData();
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                map[i][j].direction = Math.toRadians(raster.getSampleFloat(j, i, 0));
-            }
-        }
-    }
-
-    public GridMap(File slopeFile, File typeFile, File directionFile) throws IOException, TransformException {
-        GridCoverage2D coverage = TiffTransform.readTiff(slopeFile);
-        RenderedImage renderedImage = coverage.getRenderedImage();
-        Raster raster = renderedImage.getData();
-
-        if (latAndLongRange == null) {
-            latAndLongRange = new double[4];
-        }
-
-        width = renderedImage.getWidth();
-        height = renderedImage.getHeight();
-        map = new Grid[height][width];
-        unitLength = TiffTransform.getUnitLength(coverage);
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                map[i][j] = new Grid();
-            }
-        }
-
-
-        // 获取坡度
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                map[i][j].slope = Math.toRadians(raster.getSampleFloat(j, i, 0));
-                map[i][j].LatAndLon = TiffTransform.getLatAndLon(coverage, j, i);
-            }
-        }
-
-        Envelope2D envelope2D = coverage.getEnvelope2D();
-        // 获取经纬度范围
-        this.latAndLongRange[0] = envelope2D.getBounds2D().getMinX();
-        this.latAndLongRange[1] = envelope2D.getBounds2D().getMinY();
-        this.latAndLongRange[2] = envelope2D.getBounds2D().getMaxX();
-        this.latAndLongRange[3] = envelope2D.getBounds2D().getMaxY();
-
-        coverage = TiffTransform.readTiff(typeFile);
-        raster = coverage.getRenderedImage().getData();
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                map[i][j].type = raster.getSampleFloat(j, i, 0);
-            }
-        }
-
-        //获取坡向
         try {
-            coverage = TiffTransform.readTiff(directionFile);
+            coverage = TiffTransform.readTiff(directionPath);
             raster = coverage.getRenderedImage().getData();
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
@@ -177,7 +124,6 @@ public class GridMap {
         }
 
     }
-
 
     public void ignite(int x, int y, double t) {
         map[x][y].isIgnited = true;
