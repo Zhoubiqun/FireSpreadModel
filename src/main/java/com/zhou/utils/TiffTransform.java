@@ -182,4 +182,44 @@ public class TiffTransform {
     }
 
     //
+
+    /**
+     * 根据几何模型进行影像切割
+     * @param reader 原始印象
+     */
+    public static GridCoverage2D saveToTiff( GeoTiffReader reader, GridCoverage2D coverage,GridMap gridMap,String dstFile) {
+        try{
+            //包围盒
+            Envelope2D envelope2D = coverage.getEnvelope2D();
+            //获取经纬度
+            double minX = envelope2D.getBounds2D().getMinX();
+            double minY = envelope2D.getBounds2D().getMinY();
+            double maxX = envelope2D.getBounds2D().getMaxX();
+            double maxY = envelope2D.getBounds2D().getMaxY();
+
+            //转换为数组块
+            int width = gridMap.getWidth();
+            int height = gridMap.getHeight();
+            float[][] arrBlock = new float[height][width];
+            for(int row =0; row < height; row ++){
+                for(int col =0; col < width; col ++){
+                    arrBlock[row][col] = (float) gridMap.getMap()[row][col].getIgnitedTime();
+                }
+            }
+
+            //保存输出
+            Envelope2D tmEnvelope = new Envelope2D(reader.getCoordinateReferenceSystem(),minX,minY,maxX - minX,maxY - minY);
+            GridCoverageFactory gridFactory = new GridCoverageFactory();
+            GridCoverage2D outputCoverage = gridFactory.create("subtractTiff", arrBlock,tmEnvelope);
+
+            GeoTiffWriter writer = new GeoTiffWriter(new File(dstFile));
+            writer.write(outputCoverage, null);
+            writer.dispose();
+            return  outputCoverage;
+        }catch (Exception e){
+            e.printStackTrace();
+            return  null;
+        }
+
+    }
 }
