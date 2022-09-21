@@ -1,15 +1,21 @@
 package com.zhou.utils;
 
 import com.zhou.bean.Grid;
+import com.zhou.bean.GridMap;
+import org.geotools.coverage.GridSampleDimension;
 import org.geotools.coverage.grid.GridCoordinates2D;
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.OverviewPolicy;
 import org.geotools.gce.geotiff.GeoTiffReader;
+import org.geotools.gce.geotiff.GeoTiffWriter;
+import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.Envelope2D;
 import org.geotools.geometry.GeneralEnvelope;
 import org.geotools.referencing.GeodeticCalculator;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.jaitools.imageutils.ImageUtils;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -19,12 +25,17 @@ import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import sun.awt.image.SunWritableRaster;
 
 import javax.media.jai.ImageLayout;
+import javax.media.jai.PlanarImage;
+import java.awt.*;
 import java.awt.color.ColorSpace;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ColorModel;
 import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.IOException;
@@ -147,7 +158,7 @@ public class TiffTransform {
         GridEnvelope gridRange = coverage.getGridGeometry().getGridRange();
         GeometryFactory gf = new GeometryFactory();
 
-        GridCoordinates2D coord = new GridCoordinates2D(j, i);
+        GridCoordinates2D coord = new GridCoordinates2D(i,j);
         DirectPosition p = coverage.getGridGeometry().gridToWorld(coord);
         Point point = gf.createPoint(new Coordinate(p.getOrdinate(0), p.getOrdinate(1)));
         //Geometry wgsP = JTS.transform(point, targetToWgs);
