@@ -1,7 +1,5 @@
-package com.zhou.utils;
+package com.zhou.bean;
 
-
-import java.io.File;
 
 public class HttpResult {
     private int code = 200;

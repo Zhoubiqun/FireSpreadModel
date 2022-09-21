@@ -3,7 +3,6 @@ package com.zhou.controller;
 import com.zhou.bean.GridMap;
 import com.zhou.bean.Wind;
 import com.zhou.model.FireSpreadModel;
-import com.zhou.utils.HttpResult;
 import com.zhou.utils.TiffTransform;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.geotiff.GeoTiffReader;
