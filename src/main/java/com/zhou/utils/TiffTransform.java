@@ -119,7 +119,17 @@ public class TiffTransform {
         return image;
     }
 
-    public static double[] getUnitLength(GridCoverage2D coverage){
+    public static GridCoverage2D readTiff(File f) throws IOException {
+        ParameterValue<OverviewPolicy> policy = AbstractGridFormat.OVERVIEW_POLICY.createValue();
+        policy.setValue(OverviewPolicy.IGNORE);
+        ParameterValue<String> gridsize = AbstractGridFormat.SUGGESTED_TILE_SIZE.createValue();
+        ParameterValue<Boolean> useJaiRead = AbstractGridFormat.USE_JAI_IMAGEREAD.createValue();
+        useJaiRead.setValue(true);
+        GridCoverage2D image = new GeoTiffReader(f).read(new GeneralParameterValue[]{policy, gridsize, useJaiRead});
+        return image;
+    }
+
+    public static double[] getUnitLength(GridCoverage2D coverage) {
         Envelope2D envelope2D = coverage.getEnvelope2D();
         //获取经纬度
         double minX = envelope2D.getBounds2D().getMinX();
@@ -130,16 +140,16 @@ public class TiffTransform {
         // 84坐标系构造Geo
         GeodeticCalculator geodeticCalculator = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
         // 左上角经纬度
-        geodeticCalculator.setStartingGeographicPoint(minX,maxY);
+        geodeticCalculator.setStartingGeographicPoint(minX, maxY);
         // 右上角经纬度
-        geodeticCalculator.setDestinationGeographicPoint(maxX,maxY);
+        geodeticCalculator.setDestinationGeographicPoint(maxX, maxY);
         // 计算距离：单位米
         double distanceLon = geodeticCalculator.getOrthodromicDistance();
 
         // 左上角经纬度
-        geodeticCalculator.setStartingGeographicPoint(minX,maxY);
+        geodeticCalculator.setStartingGeographicPoint(minX, maxY);
         // 左下角经纬度
-        geodeticCalculator.setDestinationGeographicPoint(minX,minY);
+        geodeticCalculator.setDestinationGeographicPoint(minX, minY);
         // 计算距离：单位米
         double distanceLat = geodeticCalculator.getOrthodromicDistance();
 //        System.out.println(distance+" "+distance1);
@@ -150,15 +160,15 @@ public class TiffTransform {
         //栅格平均距离
 //        System.out.println(distance/width);
 //        System.out.println(distance1/height);
-        return new double[]{distanceLat/height,distanceLon/width};
+        return new double[]{distanceLat / height, distanceLon / width};
     }
 
     // 初始化获取各个像素点经纬度
-    public static double[] getLatAndLon(GridCoverage2D coverage,int i,int j) throws TransformException {
+    public static double[] getLatAndLon(GridCoverage2D coverage, int i, int j) throws TransformException {
         GridEnvelope gridRange = coverage.getGridGeometry().getGridRange();
         GeometryFactory gf = new GeometryFactory();
 
-        GridCoordinates2D coord = new GridCoordinates2D(i,j);
+        GridCoordinates2D coord = new GridCoordinates2D(i, j);
         DirectPosition p = coverage.getGridGeometry().gridToWorld(coord);
         Point point = gf.createPoint(new Coordinate(p.getOrdinate(0), p.getOrdinate(1)));
         //Geometry wgsP = JTS.transform(point, targetToWgs);
@@ -170,7 +180,7 @@ public class TiffTransform {
     }
 
     // 根据经纬度算距离
-    public static double getDist(Grid g1, Grid g2){
+    public static double getDist(Grid g1, Grid g2) {
         // 84坐标系构造Geo
         GeodeticCalculator geodeticCalculator = new GeodeticCalculator(DefaultGeographicCRS.WGS84);
         // 左上角经纬度
@@ -185,10 +195,11 @@ public class TiffTransform {
 
     /**
      * 根据几何模型进行影像切割
+     *
      * @param reader 原始印象
      */
-    public static GridCoverage2D saveToTiff( GeoTiffReader reader, GridCoverage2D coverage,GridMap gridMap,String dstFile) {
-        try{
+    public static GridCoverage2D saveToTiff(GeoTiffReader reader, GridCoverage2D coverage, GridMap gridMap, String dstFile) {
+        try {
             //包围盒
             Envelope2D envelope2D = coverage.getEnvelope2D();
             //获取经纬度
@@ -201,24 +212,60 @@ public class TiffTransform {
             int width = gridMap.getWidth();
             int height = gridMap.getHeight();
             float[][] arrBlock = new float[height][width];
-            for(int row =0; row < height; row ++){
-                for(int col =0; col < width; col ++){
+            for (int row = 0; row < height; row++) {
+                for (int col = 0; col < width; col++) {
                     arrBlock[row][col] = (float) gridMap.getMap()[row][col].getIgnitedTime();
                 }
             }
 
             //保存输出
-            Envelope2D tmEnvelope = new Envelope2D(reader.getCoordinateReferenceSystem(),minX,minY,maxX - minX,maxY - minY);
+            Envelope2D tmEnvelope = new Envelope2D(reader.getCoordinateReferenceSystem(), minX, minY, maxX - minX, maxY - minY);
             GridCoverageFactory gridFactory = new GridCoverageFactory();
-            GridCoverage2D outputCoverage = gridFactory.create("subtractTiff", arrBlock,tmEnvelope);
+            GridCoverage2D outputCoverage = gridFactory.create("subtractTiff", arrBlock, tmEnvelope);
 
             GeoTiffWriter writer = new GeoTiffWriter(new File(dstFile));
             writer.write(outputCoverage, null);
             writer.dispose();
-            return  outputCoverage;
-        }catch (Exception e){
+            return outputCoverage;
+        } catch (Exception e) {
             e.printStackTrace();
-            return  null;
+            return null;
+        }
+
+    }
+
+    public static GridCoverage2D saveToTiff(GeoTiffReader reader, GridCoverage2D coverage, GridMap gridMap, File dstFile) {
+        try {
+            //包围盒
+            Envelope2D envelope2D = coverage.getEnvelope2D();
+            //获取经纬度
+            double minX = envelope2D.getBounds2D().getMinX();
+            double minY = envelope2D.getBounds2D().getMinY();
+            double maxX = envelope2D.getBounds2D().getMaxX();
+            double maxY = envelope2D.getBounds2D().getMaxY();
+
+            //转换为数组块
+            int width = gridMap.getWidth();
+            int height = gridMap.getHeight();
+            float[][] arrBlock = new float[height][width];
+            for (int row = 0; row < height; row++) {
+                for (int col = 0; col < width; col++) {
+                    arrBlock[row][col] = (float) gridMap.getMap()[row][col].getIgnitedTime();
+                }
+            }
+
+            //保存输出
+            Envelope2D tmEnvelope = new Envelope2D(reader.getCoordinateReferenceSystem(), minX, minY, maxX - minX, maxY - minY);
+            GridCoverageFactory gridFactory = new GridCoverageFactory();
+            GridCoverage2D outputCoverage = gridFactory.create("subtractTiff", arrBlock, tmEnvelope);
+
+            GeoTiffWriter writer = new GeoTiffWriter(dstFile);
+            writer.write(outputCoverage, null);
+            writer.dispose();
+            return outputCoverage;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
 
     }

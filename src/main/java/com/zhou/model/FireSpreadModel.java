@@ -9,19 +9,25 @@ import java.util.*;
 public class FireSpreadModel {
 
     private double fuelMoistureContent;
+
     private GridMap gridMap;
+
     private Wind wind;
+
     private List<int[]> startPoints;
+
     private double T;
 
     private double R0;
+
     private static Map<Integer, Double> KsMap = new HashMap();
 
     static {
-        KsMap.put(1, 0.4);
-        KsMap.put(2, 0.7);
-        KsMap.put(3, 1.0);
-        KsMap.put(4, 1.6);
+        KsMap.put(1, 0.0);  //1.其他
+        KsMap.put(2, 1.0);  //2.阔叶林
+        KsMap.put(3, 0.4);  //3.针叶林
+        KsMap.put(4, 0.7);  //4.针阔混交林
+        KsMap.put(5, 1.6);  //5.草
     }
 
 
@@ -75,10 +81,10 @@ public class FireSpreadModel {
                                 continue;
                             }
                             Grid neighborGrid = gridMap.getMap()[nx][ny];
-                            double dist = (Math.sqrt(i * i * gridMap.getUnitLength()[0] * gridMap.getUnitLength()[0] + j * j  * gridMap.getUnitLength()[1] * gridMap.getUnitLength()[1] )); // 目标点距离
+                            double dist = (Math.sqrt(i * i * gridMap.getUnitLength()[0] * gridMap.getUnitLength()[0] + j * j * gridMap.getUnitLength()[1] * gridMap.getUnitLength()[1])); // 目标点距离
                             double forwardDirection = -Math.atan2(-i, j) + Math.PI / 2; // 扩散方向角, 以(i=-1,j=0)为北向以及0度，则j=cos,-i=-sin
                             double v = getR(forwardDirection, grid);
-                            if(v==0){
+                            if (v == 0) {
                                 continue;
                             }
                             double t = minTime + dist / v;

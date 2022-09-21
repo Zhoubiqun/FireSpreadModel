@@ -28,18 +28,26 @@ public class FireSpreadModelTest {
     }
 
     @Test
-    public void testKs() {
+    public void testKs() throws TransformException, IOException {
 //        FireSpreadModel fireSpreadModel = new FireSpreadModel();
 //        fireSpreadModel.setParameter(7.4, new FuelType("水"), null, null);
 //        System.out.println(fireSpreadModel.getKs());
 //        fireSpreadModel.setParameter(7.4, new FuelType("针叶林"), null, null);
 //        System.out.println(fireSpreadModel.getKs());
+        String filepathSlope = "C:\\code\\java\\javaweb\\t\\FireSpreadModel\\src\\main\\resources\\data\\LinAnDemSlope_nodata0.tif";
+
+        String filepathType = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_type.tif";
+
+        GridMap mapModel = new GridMap(filepathSlope, filepathType, null);
     }
 
     @Test
     public void testRun() throws IOException, TransformException {
-        String filepathSlope = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_slope.tif";
-        String filepathType = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_type.tif";
+        String filepathSlope = "C:\\code\\java\\javaweb\\t\\FireSpreadModel\\src\\main\\resources\\data\\LinAnDemSlope_nodata0.tif";
+        String filepathType = "C:\\code\\java\\javaweb\\t\\FireSpreadModel\\src\\main\\resources\\data\\LinAnForestClass_nodata1.tif";
+//        String filepathSlope = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_slope.tif";
+
+//        String filepathType = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_type.tif";
 
         GridMap mapModel = new GridMap(filepathSlope, filepathType, null);
         Wind windModel = new Wind(0, 0);

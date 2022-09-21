@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xml:lang="zh"><Esri><CreaDate>20220920</CreaDate><CreaTime>10004900</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="c:\program files (x86)\arcgis\desktop10.6\ArcToolbox\Toolboxes\Spatial Analyst Tools.tbx\RasterCalculator" Date="20220920" Time="100049">RasterCalculator Con(IsNull("LinAnForestClass.tif"),1,"LinAnForestClass.tif") C:\Users\icepig\Desktop\20220911林火蔓延模型所需参数数据\test\LinAnForestClass_nodata1.tif</Process></lineage></DataProperties></Esri></metadata>

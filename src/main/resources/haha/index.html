@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+</head>
+<body>
+<h1>首页</h1>
+<form action="/user" method="get">
+    <input type="submit" value="测试get"><br>
+</form>
+
+<form action="/user" method="post">
+    <input type="submit" value="测试post"><br>
+</form>
+
+<form action="/user" method="post">
+    <input type="submit" value="测试put"><br>
+    <input type="hidden" name="_method" value="put"><br>
+</form>
+
+<form action="/user" method="post">
+    <input type="submit" value="测试delete"><br>
+    <input type="hidden" name="_method" value="delete"><br>
+</form>
+<hr/>
+测试基本注解：
+<ul>
+    <a href="/car/2/owner/zhangsan">/car/{id}/owner/{userName}</a>
+    <li>@PathVariable路径变量</li>
+    <li>@RequestHeader获取请求头</li>
+    <li>@RequestParam获取请求参数</li>
+    <li>@CookieValue获取cookie值</li>
+    <li>@RequestAttribute获取request域属性</li>
+    <li>@RequestBody获取请求体[post]</li>
+    <li>@MatrixVariable获取矩阵变量</li>
+</ul>
+<a href="/cars/sell;low=34;brand=bmw,audi,yd">@MatrixVariable</a>
+<a href="/cars/sell;low=34;brand=bwm;brand=audi;brand=yd">@MatrixVariable</a>
+<a href="/boss/1;age=20/2;age=10">@MatrixVariable/boss/{bossId}/{empId}</a>
+<br/>
+<form action="/save" method="post">
+    测试@RequestBody获取数据 <br>
+    用户名: <input name="userName"><br>
+    邮箱: <input name="email">
+    <input type="submit" value="提交">
+</form>
+<ol>
+    <li>矩阵变量需要在Springboot中手动开启</li>
+    <li>根据RFC3986规范，矩阵变量应当绑定在路径变量中</li>
+    <li>若是有多个矩阵变量，应当使用英文符号;进行分隔</li>
+    <li>若是一个矩阵变量有多个值，应当使用英文符号,进行分隔，或之命名多个重复的key即可</li>
+</ol>
+<form action="subscribe.html" th:attr="action=@{/subscribe}">
+    <fieldset>
+        <input type="text" name="email">
+        <input type="submit" value="Subsribe!" th:attr="value=#{subscribe.submit}">
+    </fieldset>
+</form>
+</body>
+</html>
