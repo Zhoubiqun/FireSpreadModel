@@ -87,10 +87,10 @@ public class GridMap {
 
 
         // 获取坡度
-        for (int i = 1; i < height; i++) {
-            for (int j = 1; j < width - 1; j++) {
-                map[i][j].slope = Math.toRadians(raster.getSampleFloat(i, j, 0));
-                map[i][j].LatAndLon = TiffTransform.getLatAndLon(coverage, i, j);
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width ; j++) {
+                map[i][j].slope = Math.toRadians(raster.getSampleFloat(j,i, 0));
+                map[i][j].LatAndLon = TiffTransform.getLatAndLon(coverage, j,i);
             }
         }
 
@@ -103,18 +103,18 @@ public class GridMap {
 
         coverage = TiffTransform.readTiff(typePath);
         raster = coverage.getRenderedImage().getData();
-        for (int i = 1; i < height; i++) {
-            for (int j = 1; j < width - 1; j++) {
-                map[i][j].type = raster.getSampleFloat(i, j, 0);
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                map[i][j].type = raster.getSampleFloat(j, i, 0);
             }
         }
 
-        // 获取坡向
+        //获取坡向
         coverage = TiffTransform.readTiff(directionPath);
         raster = coverage.getRenderedImage().getData();
-        for (int i = 1; i < height; i++) {
-            for (int j = 1; j < width - 1; j++) {
-                map[i][j].direction = Math.toRadians(raster.getSampleFloat(i, j, 0));
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                map[i][j].direction = Math.toRadians(raster.getSampleFloat(j, i, 0));
             }
         }
     }
