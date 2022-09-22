@@ -66,11 +66,11 @@ public class FirePredictController {
         try {
 //            File resultFile = ResourceUtils.getFile(this.getClass().getClassLoader().getResource("").getPath()+resultPath);
 //            GeoTiffReader geoTiffReader = new GeoTiffReader(this.getClass().getClassLoader().getResource("").getPath()+slopePath);
-
-            File resultFile = new File(resultPath);
+            String resultFilePath = String.format("%s/result_ws=%.1f&wd=%.2f&spLat=%.2f&spLon=%.2f&mT=%.1f&fuelMc=%.1f.tif",
+                    resultPath, windSpeed, windDirection, startPointLat, startPointLon, maxTime, fuelMoistureContent);
             GeoTiffReader geoTiffReader = new GeoTiffReader(slopePath);
             GridCoverage2D gridCoverage2D = TiffTransform.readTiff(slopePath);
-            GridCoverage2D toTiff = TiffTransform.saveToTiff(geoTiffReader, gridCoverage2D, mapModel, resultFile);
+            GridCoverage2D toTiff = TiffTransform.saveToTiff(geoTiffReader, gridCoverage2D, mapModel, resultFilePath);
         } catch (Exception e) {
             return "Save result error :" + e;
         }
