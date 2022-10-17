@@ -1,13 +1,17 @@
 package com.zhou.utils;
 
+import net.sf.json.JSONArray;
+import com.zhou.bean.FirePoint;
 import com.zhou.bean.Grid;
 import com.zhou.bean.GridMap;
 import org.geotools.coverage.GridSampleDimension;
 import org.geotools.coverage.grid.GridCoordinates2D;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
+import org.geotools.coverage.grid.GridGeometry2D;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.OverviewPolicy;
+import org.geotools.data.DataSourceException;
 import org.geotools.gce.geotiff.GeoTiffReader;
 import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.geotools.geometry.DirectPosition2D;
@@ -38,7 +42,10 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 /**
  * @author zbq
@@ -227,5 +234,133 @@ public class TiffTransform {
         writer.dispose();
         return outputCoverage;
 
+    }
+
+    public static void TiffToJson(String TiffPath)throws IOException, TransformException
+    {
+        File sourceTiff = new File(TiffPath);
+
+        try
+        {
+            GeoTiffReader geoTiffReader = new GeoTiffReader(sourceTiff);
+            GridCoverage2D sourceCoverage  = geoTiffReader.read(null);
+            GridGeometry2D sourceGeometry = sourceCoverage.getGridGeometry();
+
+            RenderedImage sourceImage = sourceCoverage.getRenderableImage(0, 1).createDefaultRendering();
+            Raster sourceRaster = sourceImage.getData();
+            int width = sourceRaster.getWidth();
+            int height = sourceRaster.getHeight();
+
+            // 忽略-1，将有值的地方输出为json
+            float tempF;
+            DirectPosition worldPosition;
+            List<FirePoint> list = new ArrayList<FirePoint>();
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    //获取当前像素位置的值
+                    tempF = sourceRaster.getSampleFloat(i, j, 0);
+                    if(tempF!=-1)
+                    {
+                        //通过行列号获取地理坐标
+                        worldPosition = sourceGeometry.gridToWorld(new GridCoordinates2D(i,j));
+
+                        //JSONObject jsonTemp = new JSONObject();
+                        //jsonTemp.put("t", tempF);
+                        //jsonTemp.put("x", Math.round(worldPosition.getCoordinate()[0]*1000000)/1000000.000000);//保留6位小数
+                        //jsonTemp.put("y", Math.round(worldPosition.getCoordinate()[1]*1000000)/1000000.000000);
+                        //list.add(jsonTemp.toJSONString());
+
+                        //添加到list
+                        FirePoint fp = new FirePoint(tempF,
+                                Math.round(worldPosition.getCoordinate()[0]*1000000)/1000000.000000,
+                                Math.round(worldPosition.getCoordinate()[1]*1000000)/1000000.000000);//保留6位小数
+                        list.add(fp);
+                    }
+                }
+            }
+
+            //保存为json文件
+            String JsonPath = sourceTiff.getParent() + File.separator + sourceTiff.getName() + ".json";
+            File targetJson = new File(JsonPath);
+            try (FileWriter writer = new FileWriter(targetJson))
+            {
+                //如果文件不存在，则创建
+                if (!targetJson.exists()) {
+                    targetJson.createNewFile();
+                }
+                //根据time对list进行升序排序
+                Collections.sort(list);
+                //写出到json文件
+                JSONArray jsa = JSONArray.fromObject(list);
+                writer.write(jsa.toString());
+                writer.flush();
+                writer.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        catch (DataSourceException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static List<FirePoint> TiffToList(String TiffPath)throws IOException, TransformException
+    {
+        File sourceTiff = new File(TiffPath);
+
+        try
+        {
+            GeoTiffReader geoTiffReader = new GeoTiffReader(sourceTiff);
+            GridCoverage2D sourceCoverage  = geoTiffReader.read(null);
+            GridGeometry2D sourceGeometry = sourceCoverage.getGridGeometry();
+
+            RenderedImage sourceImage = sourceCoverage.getRenderableImage(0, 1).createDefaultRendering();
+            Raster sourceRaster = sourceImage.getData();
+            int width = sourceRaster.getWidth();
+            int height = sourceRaster.getHeight();
+
+            // 忽略-1，将有值的地方输出为json
+            float tempF;
+            DirectPosition worldPosition;
+            List<FirePoint> list = new ArrayList<FirePoint>();
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    //获取当前像素位置的值
+                    tempF = sourceRaster.getSampleFloat(i, j, 0);
+                    if(tempF!=-1)
+                    {
+                        //通过行列号获取地理坐标
+                        worldPosition = sourceGeometry.gridToWorld(new GridCoordinates2D(i,j));
+
+                        //JSONObject jsonTemp = new JSONObject();
+                        //jsonTemp.put("t", tempF);
+                        //jsonTemp.put("x", Math.round(worldPosition.getCoordinate()[0]*1000000)/1000000.000000);//保留6位小数
+                        //jsonTemp.put("y", Math.round(worldPosition.getCoordinate()[1]*1000000)/1000000.000000);
+                        //list.add(jsonTemp.toJSONString());
+
+                        //添加到list
+                        FirePoint fp = new FirePoint(tempF,
+                                Math.round(worldPosition.getCoordinate()[0]*1000000)/1000000.000000,
+                                Math.round(worldPosition.getCoordinate()[1]*1000000)/1000000.000000);//保留6位小数
+                        list.add(fp);
+                    }
+                }
+            }
+            //保存为json文件
+            Collections.sort(list);
+            return list;
+        }
+        catch (DataSourceException e)
+        {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

@@ -1,7 +1,9 @@
 package com.zhou.controller;
 
+import com.zhou.bean.FirePoint;
 import com.zhou.bean.GridMap;
 import com.zhou.bean.Wind;
+import com.zhou.core.HttpResult;
 import com.zhou.model.FireSpreadModel;
 import com.zhou.utils.TiffTransform;
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -17,6 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.zhou.utils.TiffTransform.TiffToJson;
+import static com.zhou.utils.TiffTransform.TiffToList;
 
 @RestController
 public class FirePredictController {
@@ -71,11 +76,50 @@ public class FirePredictController {
             GeoTiffReader geoTiffReader = new GeoTiffReader(slopePath);
             GridCoverage2D gridCoverage2D = TiffTransform.readTiff(slopePath);
             GridCoverage2D toTiff = TiffTransform.saveToTiff(geoTiffReader, gridCoverage2D, mapModel, resultFilePath);
+            TiffToJson(resultFilePath);
         } catch (Exception e) {
             return "Save result error :" + e;
         }
 //        return "redirect:localhost:11117/result.tif";
         return "ok";
+    }
+
+    @RequestMapping("/startRunJson")
+    public List<FirePoint> run2(@RequestParam("ws") Double windSpeed,
+                                @RequestParam("wd") Double windDirection,
+                                @RequestParam("spLat") Double startPointLat,
+                                @RequestParam("spLon") Double startPointLon,
+                                @RequestParam("mT") double maxTime,
+                                @RequestParam("fuelMc") double fuelMoistureContent) throws IOException, TransformException {
+        Wind wind = new Wind(windDirection, windSpeed);
+        GridMap mapModel = null;
+
+        try {
+            mapModel = new GridMap(slopePath, typePath, directionPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (TransformException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        int[] loc = mapModel.LatAndLonToIdx(startPointLat, startPointLon);
+        List<int[]> startPoints = Arrays.asList(loc);
+        FireSpreadModel fireSpreadModel = new FireSpreadModel();
+        fireSpreadModel.setParameter(fuelMoistureContent, mapModel, wind, startPoints, maxTime);
+        fireSpreadModel.run();
+
+        try {
+            String resultFilePath = String.format("%s/result_ws=%.1f&wd=%.2f&spLat=%.2f&spLon=%.2f&mT=%.1f&fuelMc=%.1f.tif",
+                    resultPath, windSpeed, windDirection, startPointLat, startPointLon, maxTime, fuelMoistureContent);
+            GeoTiffReader geoTiffReader = new GeoTiffReader(slopePath);
+            GridCoverage2D gridCoverage2D = TiffTransform.readTiff(slopePath);
+            TiffTransform.saveToTiff(geoTiffReader, gridCoverage2D, mapModel, resultFilePath);
+            return TiffToList(resultFilePath);
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
 }

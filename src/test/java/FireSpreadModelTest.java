@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.zhou.utils.TiffTransform.TiffToJson;
+
 public class FireSpreadModelTest {
     @Test
     public void testR0() {
@@ -130,8 +132,8 @@ public class FireSpreadModelTest {
 //        String filepathSlope = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_slope.tif";
 //        String filepathType = "C:\\code\\java\\javaweb\\forestFireSimulation\\src\\main\\java\\com\\wy\\v1\\test\\zhejiangDEM_clip_type.tif";
 
-        String filepathSlope = "D:\\作业\\实习\\论文\\GIS林火蔓延模型\\test\\zhejiangDEM_clip_slope.tif";
-        String filepathType = "D:\\作业\\实习\\论文\\GIS林火蔓延模型\\test\\zhejiangDEM_clip_type.tif";
+        String filepathSlope = "C:\\Users\\王宇\\Desktop\\result_ws=1.0_wd=0.00_spLat=30.19_spLon=119.35_mT=10000.0_fuelMc=7.4.tif";
+        String filepathType = "C:\\Users\\王宇\\Desktop\\result_ws=1.0_wd=0.00_spLat=30.19_spLon=119.35_mT=50000.0_fuelMc=7.4.tif";
         GridMap mapModel = new GridMap(filepathSlope, filepathType, null);
         double lat = 30.368368794296, lon = 119.670559873054;
         int[] loc = mapModel.LatAndLonToIdx(lat, lon);
